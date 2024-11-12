@@ -1,0 +1,17 @@
+
+##
+## REPLACE THIS WITH YOUR OWN MAKEFILE
+##
+
+
+LIBDIR	= ../lib
+LIBNAME	= libLockFile.so
+LIB		= $(LIBDIR)/$(LIBNAME)
+
+
+$(LIB) $(LIBNAME):	$(OBJS)
+	touch $(LIB)
+
+clean:
+	- rm -f $(LIB)
+

@@ -1,0 +1,51 @@
+##
+##	Makefile for dynamic loading on Windows
+##
+
+
+##
+##	Variables
+##	---------
+##
+
+# Name of the executable to produce
+EXE	= recordManager.exe
+
+# List of all of the object files in your project
+OBJS = rm-main.obj rm-lockwrapper.obj rm-db.obj
+
+# library that we use
+LIB		= libDBindex.dll
+
+# Define the C compiler
+CC		= cl
+
+# Flags for compiling - note that Windows uses / instead of - to indicate a flag
+CFLAGS = /DOS_USE_DYNAMIC
+
+# Library paths and libs
+LDFLAGS = /LIBPATH:"$(LIBPATH)" /LIBPATH:"$(LIB)"
+LDLIBS =
+
+
+##
+##	Build Targets
+##	-------------
+##
+
+# Default target - build the program
+# The icacls line grants permisson to run our executable
+$(EXE) exe : $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) /link /out:$(EXE) $(LDFLAGS) $(LDLIBS)
+	icacls $(EXE) /grant Everyone:RX
+
+##
+##	Cleanup Targets
+##	---------------
+##
+
+clean :
+	- del /f $(EXE)
+	- del /f $(OBJS)
+	- del /f *.pdb
+

@@ -1,0 +1,9 @@
+*.exe
+*.o
+*.obj
+*.pdb
+*.so
+*.dll
+*.lib
+*.def
+.*.swp

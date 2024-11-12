@@ -1,0 +1,17 @@
+
+
+CFLAGS	= -g -fPIC -I../include -I..
+
+LIBDIR	= ../lib
+LIBNAME	= libLockRegion.so
+LIB		= $(LIBDIR)/$(LIBNAME)
+OBJS	= lockRegion.o 
+
+
+$(LIB) $(LIBNAME):	$(OBJS)
+	$(CC) -shared -fPIC -o $(LIB) $(OBJS)
+
+clean:
+	- rm -f $(LIB)
+	- rm -f $(OBJS)
+

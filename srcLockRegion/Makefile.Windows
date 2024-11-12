@@ -1,0 +1,50 @@
+##
+##	Makefile for file locker
+##
+
+
+##
+##	Variables
+##	---------
+##
+
+LIBDIR = ..\lib
+
+DLL	= $(LIBDIR)\libLockRegion.dll
+LIB	= $(LIBDIR)\libLockRegion.lib
+EXP	= $(LIBDIR)\libLockRegion.exp
+
+# List of all of the object files in your project
+OBJS	= lockRegion.obj
+
+CC		= cl
+
+# Flags for compiling
+CFLAGS	= /I../include /I.. /DOS_COMPILE_DYNAMIC
+
+# Libs that need to be linked
+LDFLAGS	= 
+LDLIBS =
+
+
+##
+##	Build Targets
+##	-------------
+##
+
+# Default target - build the library
+lib $(LIB) $(DLL):	$(OBJS)
+	link /dll /OUT:$(DLL) $(OBJS) $(LDFLAGS)
+	icacls $(DLL) /grant Everyone:RX
+
+##
+##	Cleanup Targets
+##	---------------
+##
+
+clean :
+	- del $(LIB)
+	- del $(DLL)
+	- del $(EXP)
+	- del $(OBJS)
+

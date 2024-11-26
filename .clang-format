@@ -12,5 +12,5 @@ AllowShortIfStatementsOnASingleLine: AllIfsAndElse
 InsertBraces: true
 InsertNewlineAtEOF: true
 BreakBeforeTernaryOperators: true
-
+ColumnLimit: 100
 

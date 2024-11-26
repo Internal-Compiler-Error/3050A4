@@ -4,7 +4,7 @@ project(recordManager LANGUAGES C)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_library(lockFile
-    SHARED
+        SHARED
         srcLockFile/lockfile.c
 )
 target_include_directories(lockFile PRIVATE include)
@@ -33,4 +33,5 @@ target_compile_options(recordManager PRIVATE $<$<AND:$<CONFIG:Debug>,$<OR:$<C_CO
 target_link_options(recordManager PRIVATE $<$<AND:$<CONFIG:Debug>,$<OR:$<C_COMPILER_ID:GNU>,$<C_COMPILER_ID:Clang>,$<C_COMPILER_ID:AppleClang>>>:-fsanitize=address>)
 
 target_compile_options(recordManager PRIVATE $<$<AND:$<CONFIG:Debug>,$<C_COMPILER_ID:MSVC>>:/fsanitize=address>)
+#target_link_options(recordManager PRIVATE $<$<AND:$<CONFIG:Debug>,$<C_COMPILER_ID:MSVC>>:/fsanitize=address>)
 

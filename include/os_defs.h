@@ -100,6 +100,7 @@
  **             defined only if the environment is some version of Darwin/MacOSX
  **/
 
+
 /*
  * Compilation Environment Identification
  */
@@ -135,6 +136,7 @@
 #include <windows.h>
 #include <direct.h>
 #include <io.h>
+#include <fcntl.h>
 
 // horrible hacks
 #define close _close

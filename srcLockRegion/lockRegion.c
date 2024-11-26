@@ -7,7 +7,7 @@ OS_EXPORT int OS_C_DECL openRecordManager(RecordManager* db, char const* name) {
 #ifndef OS_WINDOWS
     int fd = open(name, O_CREAT | O_RDWR, 0644);
 #else
-    int fd = _open(name, _O_CREAT | _O_RDWR | _O_BINARY,  _S_IREAD | _S_IWRITE);
+    int fd = _open(name, _O_CREAT | _O_RDWR | _O_BINARY, _S_IREAD | _S_IWRITE);
 #endif
     if (fd < 0) { return fd; }
 

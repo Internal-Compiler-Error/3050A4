@@ -1,35 +1,21 @@
-#include <errno.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-
+#include "os_defs.h"
 #include "../recordManager.h"
 #include "os_libsymbols.h"
 
-typedef int OS_C_DECL (*openRecordManagerFN)(RecordManager* db,
-                                             const char* name);
 
-typedef void OS_C_DECL (*closeRecordManagerFN)(RecordManager* db);
-
-typedef int OS_C_DECL (*lockRecordFn)(RecordManager* db, int recordIndex);
-
-typedef int OS_C_DECL (*unlockRecordFn)(RecordManager* db, int recordIndex);
-
-
-OS_C_DECL int openRecordManager(RecordManager* db, char const* name) {
+OS_EXPORT int OS_C_DECL openRecordManager(RecordManager* db, char const* name) {
     FILE* f = fopen(name, "a+");
     if (!f) { return -1; }
     db->dataFD = fileno(f);
     return 0;
 }
 
-OS_C_DECL void closeRecordManager(RecordManager* db) {
+OS_EXPORT void OS_C_DECL closeRecordManager(RecordManager* db) {
     if (db->dataFD) { close(db->dataFD); }
 }
 
-OS_C_DECL int lockRecord(RecordManager* db, int recordIndex) {
+OS_EXPORT int OS_C_DECL lockRecord(RecordManager* db, int recordIndex) {
+#ifndef OS_WINDOWS
     struct flock fl = {.l_type = F_WRLCK,
                        .l_whence = SEEK_SET,
                        .l_start = recordIndex,
@@ -38,11 +24,12 @@ OS_C_DECL int lockRecord(RecordManager* db, int recordIndex) {
 
     int status = fcntl(db->dataFD, F_SETLK, &fl);
     if (status) { perror("lockRecord"); }
-
     return status;
+#else
+#endif
 }
 
-OS_C_DECL int unlockRecord(RecordManager* db, int recordIndex) {
+OS_EXPORT int OS_C_DECL unlockRecord(RecordManager* db, int recordIndex) {
     struct flock fl = {.l_type = F_WRLCK,
                        .l_whence = SEEK_SET,
                        .l_start = recordIndex,

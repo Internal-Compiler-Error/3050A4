@@ -1,21 +1,9 @@
 #include "../include/os_libsymbols.h"
 #include "../recordManager.h"
-
-typedef int OS_C_DECL (*openRecordManagerFN)(RecordManager* db,
-                                             const char* name);
-
-typedef void OS_C_DECL (*closeRecordManagerFN)(RecordManager* db);
-
-typedef int OS_C_DECL (*lockRecordFn)(RecordManager* db, int recordIndex);
-
-typedef int OS_C_DECL (*unlockRecordFn)(RecordManager* db, int recordIndex);
-
+#include "os_defs.h"
 #include <assert.h>
-#include <errno.h>
-#include <sys/file.h>
-#include <unistd.h>
 
-OS_C_DECL int openRecordManager(RecordManager* db, char const* name) {
+OS_EXPORT int OS_C_DECL openRecordManager(RecordManager* db, char const* name) {
     FILE* f = fopen(name, "a+");
     if (!f) {
         perror("openRecord");
@@ -25,17 +13,17 @@ OS_C_DECL int openRecordManager(RecordManager* db, char const* name) {
     return 0;
 }
 
-OS_C_DECL void closeRecordManager(RecordManager* db) {
+OS_EXPORT  void OS_C_DECL closeRecordManager(RecordManager* db) {
     if (db->dataFD) { close(db->dataFD); }
 }
 
-OS_C_DECL int lockRecord(RecordManager* db, int recordIndex) {
+OS_EXPORT int OS_C_DECL lockRecord(RecordManager* db, int recordIndex) {
     (void)recordIndex;
     assert(fcntl(db->dataFD, F_GETFD) != -1);
     return flock(db->dataFD, LOCK_EX);
 }
 
-OS_C_DECL int unlockRecord(RecordManager* db, int recordIndex) {
+OS_EXPORT int OS_C_DECL unlockRecord(RecordManager* db, int recordIndex) {
     (void)recordIndex;
     assert(fcntl(db->dataFD, F_GETFD) != -1);
     return flock(db->dataFD, LOCK_UN);

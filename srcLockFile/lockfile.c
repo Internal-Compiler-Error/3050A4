@@ -11,29 +11,32 @@ typedef int OS_C_DECL (*lockRecordFn)(RecordManager* db, int recordIndex);
 typedef int OS_C_DECL (*unlockRecordFn)(RecordManager* db, int recordIndex);
 
 #include <assert.h>
+#include <errno.h>
 #include <sys/file.h>
 #include <unistd.h>
 
-
-int openRecordManager(RecordManager* db, char const* name) {
-    FILE* f = fopen(name, "rw");
-    if (!f) { return -1; }
+OS_C_DECL int openRecordManager(RecordManager* db, char const* name) {
+    FILE* f = fopen(name, "a+");
+    if (!f) {
+        perror("openRecord");
+        return -1;
+    }
     db->dataFD = fileno(f);
     return 0;
 }
 
-void closeRecordManager(RecordManager* db) {
+OS_C_DECL void closeRecordManager(RecordManager* db) {
     if (db->dataFD) { close(db->dataFD); }
 }
 
-int lockRecord(RecordManager* db, int recordIndex) {
+OS_C_DECL int lockRecord(RecordManager* db, int recordIndex) {
     (void)recordIndex;
-    assert(fcntl(db->dataFD, F_GETFD) == -1);
+    assert(fcntl(db->dataFD, F_GETFD) != -1);
     return flock(db->dataFD, LOCK_EX);
 }
 
-int unlockRecord(RecordManager* db, int recordIndex) {
+OS_C_DECL int unlockRecord(RecordManager* db, int recordIndex) {
     (void)recordIndex;
-    assert(fcntl(db->dataFD, F_GETFD) == -1);
+    assert(fcntl(db->dataFD, F_GETFD) != -1);
     return flock(db->dataFD, LOCK_UN);
 }

@@ -8,7 +8,7 @@
  ** Need more here to define macros based on OS
  **/
 
-typedef  void * LockModuleRef;
+typedef void* LockModuleRef;
 
 # define LIBRARY_LOAD(n)	dlopen(n, RTLD_NOW)
 # define LIBRARY_UNLOAD(l)	dlclose(l)

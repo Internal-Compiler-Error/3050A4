@@ -1,83 +1,58 @@
-#include <errno.h> 
-#include <dlfcn.h> 
-#include <stdio.h> 
-#include <stdlib.h> 
-#include <unistd.h> 
-#include <ctype.h> 
+#include <ctype.h>
+#include <dlfcn.h>
+#include <errno.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "os_defs.h"
 #include "recordManager.h"
 
-
-
 /* Load the module and prepare for calls */
-LockModuleRef
-loadLockModule(char *lockModuleName)
-{
-	/** your code here */
-	return NULL;
+LockModuleRef loadLockModule(char *lockModuleName) {
+    void *lib = dlopen(lockModuleName, RTLD_LAZY);
+    if (!lib) { return NULL; }
+    return lib;
 }
 
 /** clean up and unload lock module */
-void
-unloadLockModule(LockModuleRef lockModule)
-{
-	/** your code here */
+void unloadLockModule(LockModuleRef lockModule) {
+    dlclose(lockModule);
 }
-
 
 /**
  ** Open up the database using the module we have loaded
  **/
-int
-rmOpenDatabase(LockModuleRef lockModule, char *name, RecordManager *db)
-{
-	int result = (-1);
+int rmOpenDatabase(LockModuleRef lockModule, char *name, RecordManager *db) {
+    int result = (-1);
 
-	/**
-	 ** Locate the "open" call within the module, and call it to open
-	 ** the database
-	 **/
+    openRecordManagerFN open = dlsym(lockModule, "openRecordManager");
+    result = open(db, name);
 
-	/** your code here */
+    if (result < 0) {
+        fprintf(stderr, "Error: Cannot open database with name '%s'\n", name);
+        return -1;
+    }
 
-
-	if (result < 0) {
-		fprintf(stderr,
-				"Error: Cannot open database with name '%s'\n", name);
-		return -1;
-	}
-
-	return 1;
+    return 1;
 }
-
 
 /** close up the database */
-int
-rmCloseDatabase(LockModuleRef lockModule, RecordManager *db)
-{
-
-	/** your code here */
-	return (-1);
-}
-
-
-
-/** call for the locking activity to happen via the library */
-int
-rmRequestLock(LockModuleRef lockModule, RecordManager *db, int recordId)
-{
-	int status = -1;
-	/** your code here */
-	return status;
+int rmCloseDatabase(LockModuleRef lockModule, RecordManager *db) {
+    closeRecordManagerFN close = dlsym(lockModule, "closeRecordManager");
+    close(db);
+    return 0;
 }
 
 /** call for the locking activity to happen via the library */
-int
-rmReleaseLock(LockModuleRef lockModule, RecordManager *db, int recordId)
-{
-	int status = -1;
-	/** your code here */
-	return status;
+int rmRequestLock(LockModuleRef lockModule, RecordManager *db, int recordId) {
+    lockRecordFn lock = dlsym(lockModule, "lockRecord");
+    return lock(db, recordId);
+}
+
+/** call for the locking activity to happen via the library */
+int rmReleaseLock(LockModuleRef lockModule, RecordManager *db, int recordId) {
+    unlockRecordFn unlock = dlsym(lockModule, "unlockRecord");
+    return unlock(db, recordId);
 }

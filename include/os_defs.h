@@ -140,6 +140,9 @@
 #define fileno _fileno
 #define lseek _lseek
 #define write _write
+#define strtok_r strtok_s
+
+inline void sleep(int s) { Sleep(s * 1000); }
 #endif // OS_WINDOWS_NT
 
 

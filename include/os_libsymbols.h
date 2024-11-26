@@ -29,7 +29,7 @@
 # elif defined( OS_STATIC )
 #  define OS_EXPORT
 # else
-#  warning "Undeclared WINDOWS setup - assuming dynamic"
+// #  warning "Undeclared WINDOWS setup - assuming dynamic" TODO: fix later
 #  define OS_EXPORT __declspec(dllexport)
 # endif
 

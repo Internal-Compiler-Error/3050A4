@@ -32,10 +32,10 @@ typedef struct DataRecord {
 /**
  **  Define the types for the function pointers in our library interface
  **/
-typedef int OS_C_DECL (*openRecordManagerFN)(RecordManager *db, const char *name);
-typedef void OS_C_DECL (*closeRecordManagerFN)(RecordManager *db);
-typedef int OS_C_DECL (*lockRecordFn)(RecordManager *db, int recordIndex);
-typedef int OS_C_DECL (*unlockRecordFn)(RecordManager *db, int recordIndex);
+typedef int (OS_C_DECL  *openRecordManagerFN)(RecordManager *db, const char *name);
+typedef void (OS_C_DECL *closeRecordManagerFN)(RecordManager *db);
+typedef int (OS_C_DECL *lockRecordFn)(RecordManager *db, int recordIndex);
+typedef int (OS_C_DECL *unlockRecordFn)(RecordManager *db, int recordIndex);
 
 
 /**

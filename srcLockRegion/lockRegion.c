@@ -4,9 +4,15 @@
 
 
 OS_EXPORT int OS_C_DECL openRecordManager(RecordManager* db, char const* name) {
-    FILE* f = fopen(name, "a+");
-    if (!f) { return -1; }
-    db->dataFD = fileno(f);
+#ifndef OS_WINDOWS
+    int fd = open(name, O_CREAT | O_RDWR, 0644);
+#else
+    int fd = _open(name, _O_CREAT | _O_RDWR | _O_BINARY,  _S_IREAD | _S_IWRITE);
+#endif
+    if (fd < 0) { return fd; }
+
+    db->dataFD = fd;
+
     return 0;
 }
 
@@ -18,11 +24,11 @@ OS_EXPORT int OS_C_DECL lockRecord(RecordManager* db, int recordIndex) {
 #ifndef OS_WINDOWS
     struct flock fl = {.l_type = F_WRLCK,
                        .l_whence = SEEK_SET,
-                       .l_start = recordIndex * sizeof(DataRecord)
+                       .l_start = recordIndex * sizeof(DataRecord),
                        .l_len = sizeof(DataRecord),
                        .l_pid = 0};
 
-    int status = fcntl(db->dataFD, F_SETLK, &fl);
+    int status = fcntl(db->dataFD, F_SETLKW, &fl);
     if (status) { perror("lockRecord"); }
     return status;
 #else
@@ -33,13 +39,14 @@ OS_EXPORT int OS_C_DECL lockRecord(RecordManager* db, int recordIndex) {
 
 OS_EXPORT int OS_C_DECL unlockRecord(RecordManager* db, int recordIndex) {
 #ifndef OS_WINDOWS
-    struct flock fl = {.l_type = F_WRLCK,
+    struct flock fl = {.l_type = F_UNLCK,
                        .l_whence = SEEK_SET,
                        .l_start = recordIndex * sizeof(DataRecord),
                        .l_len = sizeof(DataRecord),
                        .l_pid = 0};
 
-    int status = fcntl(db->dataFD, F_UNLCK, &fl);
+    int status = fcntl(db->dataFD, F_SETLKW, &fl);
+    fprintf(stderr, "done unlocking\n");
     if (status) { perror("unlockRecord"); }
 
     return status;

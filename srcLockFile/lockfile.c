@@ -4,12 +4,15 @@
 #include <assert.h>
 
 OS_EXPORT int OS_C_DECL openRecordManager(RecordManager* db, char const* name) {
-    FILE* f = fopen(name, "a+");
-    if (!f) {
-        perror("openRecord");
-        return -1;
-    }
-    db->dataFD = fileno(f);
+#ifndef OS_WINDOWS
+    int fd = open(name, O_CREAT | O_RDWR, 0644);
+#else
+    int fd = _open(name, _O_CREAT | _O_RDWR | _O_BINARY,  _S_IREAD | _S_IWRITE);
+#endif
+    if (fd < 0) { return fd; }
+
+    db->dataFD = fd;
+    lseek(db->dataFD, 0L, SEEK_SET);
     return 0;
 }
 
@@ -21,7 +24,15 @@ OS_EXPORT int OS_C_DECL lockRecord(RecordManager* db, int recordIndex) {
 #ifndef OS_WINDOWS
     (void)recordIndex;
     assert(fcntl(db->dataFD, F_GETFD) != -1);
-    return flock(db->dataFD, LOCK_EX);
+
+    struct flock fl = {
+        .l_type = F_WRLCK, .l_whence = SEEK_SET, .l_start = 0, .l_len = 0, .l_pid = 0};
+
+    int status = fcntl(db->dataFD, F_SETLKW, &fl);
+    if (status) { perror("lockRecord"); }
+    return status;
+
+//    return flock(db->dataFD, LOCK_EX);
 #else
     HANDLE h = (HANDLE)_get_osfhandle(db->dataFD);
     OVERLAPPED ol = {0};
@@ -33,9 +44,18 @@ OS_EXPORT int OS_C_DECL unlockRecord(RecordManager* db, int recordIndex) {
 #ifndef OS_WINDOWS
     (void)recordIndex;
     assert(fcntl(db->dataFD, F_GETFD) != -1);
-    return flock(db->dataFD, LOCK_UN);
+
+    struct flock fl = {
+        .l_type = F_UNLCK, .l_whence = SEEK_SET, .l_start = 0, .l_len = 0, .l_pid = 0};
+
+    int status = fcntl(db->dataFD, F_SETLKW, &fl);
+    if (status) { perror("unlockRecord"); }
+
+    return status;
+//    return flock(db->dataFD, LOCK_UN);
 #else
     HANDLE h = (HANDLE)_get_osfhandle(db->dataFD);
     OVERLAPPED ol = {0};
     return !UnlockFileEx(h, 0, 0xFFFFFFF, 0xFFFFFFF, &ol);
+#endif
 }

@@ -74,6 +74,7 @@ int rmRequestLock(LockModuleRef lockModule, RecordManager *db, int recordId) {
 int rmReleaseLock(LockModuleRef lockModule, RecordManager *db, int recordId) {
 #ifndef OS_WINDOWS
     unlockRecordFn unlock = dlsym(lockModule, "unlockRecord");
+    fprintf(stderr, "%p\n", unlock);
 
     if (!unlock) { fprintf(stderr, "%s\n", dlerror()); }
 #else

@@ -11,14 +11,14 @@ $(EXE): $(OBJS) lib/$(LIB_R) lib/$(LIB_F)
 	$(CC) $(CFLAGS) -Llib -rdynamic -o $(EXE) $(OBJS) $(LDLIBS)
 
 lib/$(LIB_R):
-	cd srcLockRegion ; make -f Makefile.Darwin $(LIB)
+	cd srcLockRegion ; make -f Makefile.Linux $(LIB)
 
 lib/$(LIB_F):
-	cd srcLockFile ; make -f Makefile.Darwin $(LIB)
+	cd srcLockFile ; make -f Makefile.Linux $(LIB)
 
 clean:
 	- rm -f $(EXE)
 	- rm -f $(OBJS)
-	cd srcLockRegion ; make -f Makefile.Darwin clean
-	cd srcLockFile ; make -f Makefile.Darwin clean
+	cd srcLockRegion ; make -f Makefile.Linux clean
+	cd srcLockFile ; make -f Makefile.Linux clean
 

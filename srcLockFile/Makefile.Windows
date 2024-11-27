@@ -1,0 +1,51 @@
+##
+##	Makefile for file locker
+##
+
+
+##
+##	Variables
+##	---------
+##
+
+LIBDIR = ..\lib
+
+DLL	= $(LIBDIR)\libLockFile.dll
+# see https://stackoverflow.com/questions/78561388/nmake-makefile-error-link-fatal-error-lnk1104-cannot-open-file-libcmt-lib for why the rename
+LIBB	= $(LIBDIR)\libLockFile.lib
+EXP	= $(LIBDIR)\libLockFile.exp
+
+# List of all of the object files in your project
+OBJS	= lockFile.obj
+
+CC		= cl
+
+# Flags for compiling
+CFLAGS	= /I../include /I.. /DOS_COMPILE_DYNAMIC /MDd
+
+# Libs that need to be linked
+LDFLAGS=
+LDLIBS=
+
+
+##
+##	Build Targets
+##	-------------
+##
+
+# Default target - build the library
+lib $(LIBB) $(DLL):	$(OBJS)
+	link  /dll /OUT:$(DLL) $(OBJS) $(LDFLAGS)
+	icacls $(DLL) /grant Everyone:RX
+
+##
+##	Cleanup Targets
+##	---------------
+##
+
+clean :
+	- del $(LIBB)
+	- del $(DLL)
+	- del $(EXP)
+	- del $(OBJS)
+

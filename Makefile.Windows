@@ -32,10 +32,16 @@ LDLIBS =
 
 # Default target - build the program
 # The icacls line grants permisson to run our executable
-$(EXE) exe : $(OBJS)
+$(EXE) exe : $(OBJS) LIB_F LIB_R
 	$(CC) $(CFLAGS) $(OBJS) /link /out:$(EXE) $(LDFLAGS) $(LDLIBS)
 	icacls $(EXE) /grant Everyone:RX
 
+LIB_R:
+	cd .\srcLockRegion && nmake -f Makefile.Windows && cd ..
+
+#
+LIB_F:
+	cd .\srcLockFile && nmake -f Makefile.Windows && cd ..
 ##
 ##	Cleanup Targets
 ##	---------------
@@ -45,4 +51,5 @@ clean :
 	- del /f $(EXE)
 	- del /f $(OBJS)
 	- del /f *.pdb
+	- del /f /Q lib\*
 

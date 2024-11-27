@@ -21,7 +21,7 @@ OBJS	= lockRegion.obj
 CC		= cl
 
 # Flags for compiling
-CFLAGS	= /I../include /I.. /DOS_COMPILE_DYNAMIC
+CFLAGS	= /I../include /I.. /DOS_COMPILE_DYNAMIC /MDd
 
 # Libs that need to be linked
 LDFLAGS=

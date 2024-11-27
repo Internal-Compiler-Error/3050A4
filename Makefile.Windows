@@ -14,14 +14,11 @@ EXE	= recordManager.exe
 # List of all of the object files in your project
 OBJS = rm-main.obj rm-lockwrapper.obj rm-db.obj
 
-# library that we use
-LIB		= libDBindex.dll
-
 # Define the C compiler
 CC		= cl
 
 # Flags for compiling - note that Windows uses / instead of - to indicate a flag
-CFLAGS = /DOS_USE_DYNAMIC
+CFLAGS = /DOS_USE_DYNAMIC  /Iinclude/
 
 # Library paths and libs
 LDFLAGS = /LIBPATH:"$(LIBPATH)" /LIBPATH:"$(LIB)"

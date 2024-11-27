@@ -11,7 +11,8 @@
 LIBDIR = ..\lib
 
 DLL	= $(LIBDIR)\libLockRegion.dll
-LIB	= $(LIBDIR)\libLockRegion.lib
+# see https://stackoverflow.com/questions/78561388/nmake-makefile-error-link-fatal-error-lnk1104-cannot-open-file-libcmt-lib for why the rename
+LIBB	= $(LIBDIR)\libLockRegion.lib
 EXP	= $(LIBDIR)\libLockRegion.exp
 
 # List of all of the object files in your project
@@ -23,8 +24,8 @@ CC		= cl
 CFLAGS	= /I../include /I.. /DOS_COMPILE_DYNAMIC
 
 # Libs that need to be linked
-LDFLAGS	= 
-LDLIBS =
+LDFLAGS=
+LDLIBS=
 
 
 ##
@@ -33,8 +34,8 @@ LDLIBS =
 ##
 
 # Default target - build the library
-lib $(LIB) $(DLL):	$(OBJS)
-	link /dll /OUT:$(DLL) $(OBJS) $(LDFLAGS)
+lib $(LIBB) $(DLL):	$(OBJS)
+	link  /dll /OUT:$(DLL) $(OBJS) $(LDFLAGS)
 	icacls $(DLL) /grant Everyone:RX
 
 ##
@@ -43,7 +44,7 @@ lib $(LIB) $(DLL):	$(OBJS)
 ##
 
 clean :
-	- del $(LIB)
+	- del $(LIBB)
 	- del $(DLL)
 	- del $(EXP)
 	- del $(OBJS)

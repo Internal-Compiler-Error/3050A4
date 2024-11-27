@@ -34,9 +34,10 @@ OS_EXPORT int OS_C_DECL lockRecord(RecordManager* db, int recordIndex) {
 
 //    return flock(db->dataFD, LOCK_EX);
 #else
+    // if you locked the all the possible region a file can have, you effectively locked the entire
+    // file
     HANDLE h = (HANDLE)_get_osfhandle(db->dataFD);
-    OVERLAPPED ol = {0};
-    return !LockFileEx(h, LOCKFILE_EXCLUSIVE_LOCK, 0, 0xFFFFFFF, 0xFFFFFFF, &ol);
+    return !LockFile(h, LOCKFILE_EXCLUSIVE_LOCK, 0, MAXDWORD, MAXDWORD);
 #endif
 }
 
@@ -52,10 +53,8 @@ OS_EXPORT int OS_C_DECL unlockRecord(RecordManager* db, int recordIndex) {
     if (status) { perror("unlockRecord"); }
 
     return status;
-//    return flock(db->dataFD, LOCK_UN);
 #else
     HANDLE h = (HANDLE)_get_osfhandle(db->dataFD);
-    OVERLAPPED ol = {0};
-    return !UnlockFileEx(h, 0, 0xFFFFFFF, 0xFFFFFFF, &ol);
+    return !UnlockFile(h, 0, MAXDWORD, MAXDWORD);
 #endif
 }

@@ -49,7 +49,6 @@ OS_EXPORT int OS_C_DECL unlockRecord(RecordManager* db, int recordIndex) {
                        .l_pid = 0};
 
     int status = fcntl(db->dataFD, F_SETLKW, &fl);
-    fprintf(stderr, "done unlocking\n");
     if (status) { perror("unlockRecord"); }
 
     return status;

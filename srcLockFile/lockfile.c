@@ -31,8 +31,6 @@ OS_EXPORT int OS_C_DECL lockRecord(RecordManager* db, int recordIndex) {
     int status = fcntl(db->dataFD, F_SETLKW, &fl);
     if (status) { perror("lockRecord"); }
     return status;
-
-//    return flock(db->dataFD, LOCK_EX);
 #else
     // if you locked the all the possible region a file can have, you effectively locked the entire
     // file

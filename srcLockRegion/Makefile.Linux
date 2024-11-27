@@ -1,17 +1,16 @@
+CFLAGS+=-fPIC -Wall -g -std=gnu11 -I../include
+LDFLAGS+=-shared
 
+LIBDIR=../lib
+LIBNAME=libLockRegion.so
+LIB=$(LIBDIR)/$(LIBNAME)
+SOURCES=$(wildcard *.c)
+OBJS=$(SOURCES:.c=.o)
 
-CFLAGS	= -g -fPIC -I../include -I..
-
-LIBDIR	= ../lib
-LIBNAME	= libLockRegion.so
-LIB		= $(LIBDIR)/$(LIBNAME)
-OBJS	= lockRegion.o 
-
-
-$(LIB) $(LIBNAME):	$(OBJS)
-	$(CC) -shared -fPIC -o $(LIB) $(OBJS)
+$(LIB) $(LIBNAME): $(OBJS)
+	$(CC) $(LDFLAGS) $^ -o $@
 
 clean:
-	- rm -f $(LIB)
-	- rm -f $(OBJS)
+	- rm -f $(LIB) *.o
 
+.PHONY: clean

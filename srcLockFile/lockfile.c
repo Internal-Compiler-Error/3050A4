@@ -1,6 +1,6 @@
-#include "../include/os_libsymbols.h"
-#include "../recordManager.h"
+#include "os_libsymbols.h"
 #include "os_defs.h"
+#include "recordManager.h"
 #include <assert.h>
 
 OS_EXPORT int OS_C_DECL openRecordManager(RecordManager* db, char const* name) {

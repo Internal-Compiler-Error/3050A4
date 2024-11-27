@@ -1,17 +1,17 @@
+CFLAGS+=-fPIC -Wall -g -std=gnu11 -I../include
+LDFLAGS+=-shared
 
-##
-## REPLACE THIS WITH YOUR OWN MAKEFILE
-##
+LIBDIR=../lib
+LIBNAME=libLockFile.dylib
+LIB=$(LIBDIR)/$(LIBNAME)
 
+SOURCES=$(wildcard *.c)
+OBJS=$(SOURCES:.c=.o)
 
-LIBDIR	= ../lib
-LIBNAME	= libLockFile.so
-LIB		= $(LIBDIR)/$(LIBNAME)
-
-
-$(LIB) $(LIBNAME):	$(OBJS)
-	touch $(LIB)
+$(LIB) $(LIBNAME): $(OBJS)
+	$(CC) $(LDFLAGS) $^ -o $@
 
 clean:
-	- rm -f $(LIB)
+	- rm -f $(LIB) *.o
 
+.PHONY: clean

@@ -33,7 +33,10 @@ OS_EXPORT int OS_C_DECL lockRecord(RecordManager* db, int recordIndex) {
     return status;
 #else
     HANDLE h = (HANDLE)_get_osfhandle(db->dataFD);
-    return !LockFile(h, recordIndex * sizeof(DataRecord), 0, sizeof(DataRecord), 0);
+    OVERLAPPED ov = {
+        .Offset = recordIndex * sizeof(DataRecord),
+    };
+    return !LockFileEx(h, LOCKFILE_EXCLUSIVE_LOCK, 0, sizeof(DataRecord), 0, &ov);
 #endif
 }
 
@@ -52,6 +55,9 @@ OS_EXPORT int OS_C_DECL unlockRecord(RecordManager* db, int recordIndex) {
     return status;
 #else
     HANDLE h = (HANDLE)_get_osfhandle(db->dataFD);
-    return !UnlockFile(h, recordIndex * sizeof(DataRecord), 0, sizeof(DataRecord), 0);
+    OVERLAPPED ov = {
+        .Offset = recordIndex * sizeof(DataRecord),
+    };
+    return !UnlockFileEx(h, 0, sizeof(DataRecord), 0, &ov);
 #endif
 }

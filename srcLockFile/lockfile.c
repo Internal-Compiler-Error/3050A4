@@ -37,7 +37,8 @@ OS_EXPORT int OS_C_DECL lockRecord(RecordManager* db, int recordIndex) {
     // if you locked the all the possible region a file can have, you effectively locked the entire
     // file
     HANDLE h = (HANDLE)_get_osfhandle(db->dataFD);
-    return !LockFile(h, LOCKFILE_EXCLUSIVE_LOCK, 0, MAXDWORD, MAXDWORD);
+    OVERLAPPED ov = {0};
+    return !LockFileEx(h, LOCKFILE_EXCLUSIVE_LOCK, 0, MAXWORD, MAXWORD, &ov);
 #endif
 }
 
@@ -55,6 +56,7 @@ OS_EXPORT int OS_C_DECL unlockRecord(RecordManager* db, int recordIndex) {
     return status;
 #else
     HANDLE h = (HANDLE)_get_osfhandle(db->dataFD);
-    return !UnlockFile(h, 0, MAXDWORD, MAXDWORD);
+    OVERLAPPED ov = {0};
+    return !UnlockFileEx(h, 0, MAXWORD, MAXWORD, &ov);
 #endif
 }
